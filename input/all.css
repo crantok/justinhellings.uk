@@ -1,0 +1,260 @@
+html {
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #666;
+    width: 100%;
+}
+
+body {
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h1 {
+    text-transform: uppercase;
+    padding-top: 20px;
+    font-size: 2.25em
+}
+
+#banner h1 {
+    padding-top: 5px;
+}
+
+h2 {
+    margin-top: 40px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 1.5em
+}
+
+header {
+    width: 100%;
+}
+
+a {
+    color: #02839d;
+    text-decoration: none;
+}
+
+header a {
+    text-decoration: none;
+    color: inherit;
+    margin: 10px;
+}
+
+.nav-container {
+    width: 100%;
+}
+
+#home-link {
+    float: left;
+    font-size: 1.25em;
+    margin-top: 15px;
+}
+
+#hamburger {
+    font-family: initial;
+    float: right;
+    font-size: 25px;
+    color: black;
+    margin-right: 20px;
+}
+
+nav {
+    text-transform: uppercase;
+    display: none;
+}
+
+nav ul {
+    clear: both;
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    border: solid lightgrey;
+    border-width: 1px 0 0 0;
+    padding: 10px
+}
+
+#hero {
+    width: 100%;
+    height: 400px;
+    background: center/cover no-repeat url(img/DSC01716.JPG.25pc.jpg) black;
+    clear: both;
+    color: white;
+    text-align: center;
+}
+
+#banner {
+    width: 100%;
+    height: 100px;
+    background: center/cover no-repeat url(img/DSC01716.JPG.25pc.jpg) black;
+    clear: both;
+    color: white;
+    text-align: center;
+}
+
+#heading-break {
+    clear: both;
+    text-align: center;
+    height: 150px;
+    background: linear-gradient( to right, aqua, aqua);
+}
+
+.hero-text {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.hero-text .offer {
+    font-size: 1.25em;
+}
+
+.hero-text .action {
+    font-size: 1.45em;
+    font-style: italic;
+    padding-top: 10px;
+}
+
+#hero a {
+    color: aqua;
+}
+
+#hero .darkening,
+#banner .darkening {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+main {
+    padding: 0 10px
+}
+
+.contact-text,
+.form-container {
+    margin-bottom: 25px;
+}
+
+.contact-text,
+.form-container,
+.copyright {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 20px;
+}
+
+.contact-text li {
+    list-style: none;
+}
+
+.contact-text li a {
+    margin-left: 20px;
+}
+
+label {
+    text-transform: uppercase;
+    font-size: 0.8em;
+}
+
+.form-control {
+    margin-top: 10px;
+}
+
+input,
+textarea {
+    width: 100%;
+    background: #eee;
+    border: 2px inset;
+}
+
+input.submit {
+    border-style: none;
+    height: 40px;
+    background: aqua;
+}
+
+#contact .form-container .status {
+    display: none;
+}
+
+#mail-status {
+    padding: 10px;
+    color: black;
+}
+
+.fa-envelope-o {
+    margin-top: -1px;
+}
+
+.g-recaptcha {
+    margin-top: 10px;
+}
+
+img {
+    display: block;
+    width: 100%;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media screen and (min-width: 500px) {
+    .hero-text {
+        max-width: 480px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+@media screen and (min-width: 542px) {
+    #banner h1 {
+        padding-top: 25px;
+    }
+}
+
+@media screen and (min-width: 700px) {
+    #contact {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    #contact h2 {
+        width: 100%;
+    }
+    #contact .box {
+        width: 50%;
+    }
+}
+
+@media screen and (min-width: 1000px) {
+    #hamburger {
+        display: none;
+    }
+    #top-menu {
+        float: right;
+        display: unset;
+    }
+    nav ul li {
+        display: inline;
+        border-style: none;
+    }
+    nav ul li:last-child {
+        margin-right: 0;
+        padding-right: 0;
+    }
+
+    .about-justin-hellings-flex-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .about-justin-hellings-flex-container .box {
+        width: 50%;
+    }
+    .about-justin-hellings-flex-container p {
+        margin-left: 50px;
+        margin-right: 50px;
+    }
+}
