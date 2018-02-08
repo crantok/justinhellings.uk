@@ -5,19 +5,17 @@
     <title>{{html-head-title}} {{#html-head-title}}|{{/html-head-title}} Justin Hellings Life Coaching</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.css">
-    <link rel="stylesheet" type="text/css" href="all.css">
+    <link rel="stylesheet" href="/font-awesome-4.7.0/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="/all.css">
     <script src='https://www.google.com/recaptcha/api.js'></script>
 </head>
 
 <body>
     <header>
         <div class="nav-container">
-            
-            {{#false}}
-            {{! Only show the site name at top of page if it is not also shown in the hero section. }}
-            <a id="site-name" href="/">Justin Hellings Life Coaching</a>
-            {{/false}}
+
+            {{#false}} {{! Only show the site name at top of page if it is not also shown in the hero section. }}
+            <a id="site-name" href="/">Justin Hellings Life Coaching</a> {{/false}}
 
             <a id="hamburger">&#9776;</a>
             <nav id="top-menu">
@@ -26,8 +24,7 @@
                     <li><a href="/about-life-coaching">About Life Coaching</a></li>
                     <li><a href="/about-justin-hellings">About Justin Hellings</a></li>
                     <li><a href="/prices">Prices</a></li>
-                    {{#false}}
-                    {{! Let's add a blog when we have at least one post. }}
+                    {{#false}} {{! Let's add a blog when we have at least one post. }}
                     <li><a href="/blog">Blog</a></li>
                     {{/false}}
                     <li><a href="#contact">Contact</a></li>
@@ -45,9 +42,7 @@
                 </div>
             </div>
         </div>
-        {{/is-home-page}}
-        
-        {{^is-home-page}}
+        {{/is-home-page}} {{^is-home-page}}
         <div id="banner">
             <div class="darkening">
                 <div class="banner-text">
