@@ -1,7 +1,7 @@
 ---
 html-head-title: About Justin Hellings
 ---
-<h2>About Me</h2>
+## About Me
 
 <div class="about-justin-hellings-flex-container">
     <div class="box">

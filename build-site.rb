@@ -20,16 +20,7 @@
 require 'fileutils'
 require 'yaml'
 require 'mustache'
-
-
-####################
-# Constants + config
-
-INPUT_DIR = Dir.pwd + "/input"
-OUTPUT_DIR = Dir.pwd + "/output"
-TEMPLATE = Dir.pwd + '/template.mustache'
-
-Mustache.template_file = TEMPLATE
+require 'redcarpet'
 
 
 ####################
@@ -73,7 +64,9 @@ def load_file(filename)
         else
             YAML.load(yaml.join)
         end
-    file[:content] = content.join
+    
+    # TO DO - Don't instantiate objects for every file, duh!
+    file[:content] = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(content.join)
     file
 end
 
@@ -86,8 +79,6 @@ def inflate(input_file_path)
     if basename == 'index'
         context['is-home-page'] = true
     end
-    
-    # ? markdown process context[:content] ?
     
     # mustache renders the file using the template set in config (above)
     file_contents = Mustache.render(context)
@@ -105,6 +96,16 @@ def inflate(input_file_path)
     File.write(output_file_path, file_contents)
     
 end
+
+
+####################
+# Constants + config
+
+INPUT_DIR = Dir.pwd + "/input"
+OUTPUT_DIR = Dir.pwd + "/output"
+TEMPLATE = Dir.pwd + '/template.mustache'
+
+Mustache.template_file = TEMPLATE
 
 
 ##################
