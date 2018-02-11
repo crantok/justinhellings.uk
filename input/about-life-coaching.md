@@ -10,6 +10,10 @@ Specific things that I can help you with include:
 - **Choosing your life goals**. What are the things that really matter to you and how can you shape your life around them?
 - **Fine-tuning your work / life balance**. How can you make sure that both your work and the rest of your life get the attention they need?
 - **Tackling the things that are holding you back**. What is it that you really want to be doing right now and why isn't that happening?
+- **Making decisions when you are at a crossroads**. Do you see paths taking you in different directions and need some perspective on your options?
+- **Feeling "stuck" in your life**. Do you feel like you are in a rut and are not sure how to get out?
+
+If you would like help with any of these things then feel free to <a href="#contact">get in touch</a> with me.
 
 ## What is a life coach?
 
