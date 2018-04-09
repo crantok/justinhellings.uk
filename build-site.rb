@@ -71,7 +71,7 @@ def load_file(filename)
 end
 
 # Load an input file, inject its content into a template, save it as an html file
-def inflate(input_file_path)
+def inflate_webpage(input_file_path, output_directory)
     
     context = load_file(input_file_path)
 
@@ -87,13 +87,55 @@ def inflate(input_file_path)
     # save file to output/index.html or output/filename/index.html
     output_file_path =
         if basename == 'index'
-            OUTPUT_DIR + '/index.html'
+            output_directory + '/index.html'
         else
-            FileUtils.mkdir( OUTPUT_DIR + '/' + basename )
-            OUTPUT_DIR + '/' + basename + '/index.html'
+            FileUtils.mkdir( output_directory + '/' + basename )
+            output_directory + '/' + basename + '/index.html'
         end
 
     File.write(output_file_path, file_contents)
+    
+end
+
+
+def build_directory(input_directory, output_directory)
+
+    puts "checking output directory ..."
+    if ! File.exist?(output_directory)
+        FileUtils.mkdir(output_directory)
+    end
+    if File.file?(output_directory)
+        puts "#{output_directory} is a regular file. Cannot make output directory of same name."
+        exit
+    elsif ! Dir[output_directory+'/*'].empty?
+        puts "#{output_directory} is not empty. Cannot start build."
+        exit
+    end
+
+    puts "scanning input directory ..."
+
+    files = Dir[input_directory+"/*"]
+    if files  == []
+        puts "No files in #{input_directory}"
+        return
+    end
+
+    puts "processing input files ..."
+
+    files.each do |x|
+        if File.extname(x) == ".md"
+            # inflate relevant template with file content
+            puts "#{x} is a content file. Inflating and copying to output dir..."
+            inflate_webpage(x, output_directory)
+        elsif File.extname(x) == ".content" && File.directory?(x)
+            puts "#{x} is a content directory. Building new output dir..."
+            build_directory(x, "#{output_directory}/#{File.basename(x,'.content')}")
+        else
+            # copy file to output directory
+            puts "#{x} is an asset. Copying to output dir..."
+            FileUtils.cp_r(x, output_directory)
+        end
+    end
     
 end
 
@@ -111,37 +153,4 @@ Mustache.template_file = TEMPLATE
 ##################
 # main script
 
-puts "checking output directory ..."
-if ! File.exist?(OUTPUT_DIR)
-    FileUtils.mkdir(OUTPUT_DIR)
-end
-if File.file?(OUTPUT_DIR)
-    puts "#{OUTPUT_DIR} is a regular file. Cannot make output directory of same name."
-    exit
-elsif ! Dir[OUTPUT_DIR+'/*'].empty?
-    puts "#{OUTPUT_DIR} is not empty. Cannot start build."
-    exit
-end
-
-puts "scanning input directory ..."
-    
-files = Dir[INPUT_DIR+"/*"]
-if files  == []
-    puts "No files in #{INPUT_DIR}"
-    exit
-end
-
-puts "processing input files ..."
-
-files.each do |x|
-    if File.extname(x) == ".md"
-        # inflate relevant template with file content
-        puts "#{x} is a content file. Inflating and copying to output dir..."
-        inflate(x)
-    else
-        # copy file to output directory
-        puts "#{x} is an asset. Copying to output dir..."
-        FileUtils.cp_r(x, OUTPUT_DIR)
-    end
-end
-    
+build_directory(INPUT_DIR, OUTPUT_DIR)
