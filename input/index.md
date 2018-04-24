@@ -3,7 +3,7 @@ html-head-title: Free Life Coaching Session
 ---
 ## Free introductory coaching session
 
-For a limited time, I am oferring all new clients the chance to have one free life coaching session. No, there are no strings attached. If you decide that one session was all you needed, then congratulations and I'm glad I could help. Please <a href="#contact">contact me</a> now if you want to take advantage of this offer.
+For a limited time, I am offering all new clients the chance to have one free life coaching session. No, there are no strings attached. If you decide that one session was all you needed then congratulations and I'm glad I could help. Please <a href="#contact">contact me</a> now if you want to take advantage of this offer.
     
 ## Phone, video-call, or in person
 
