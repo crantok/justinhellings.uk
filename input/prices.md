@@ -7,8 +7,10 @@ As you've probably noticed by now, I am convinced that coaching is a valuable an
 
 Your free session does not commit you to having more coaching. The decision about whether or not to have more coaching is yours.
 
+To arrange your free introductory session please <a href="#contact">get in touch</a> today.
+
+## Further coaching
+
 After the first free session, all subsequent coaching is charged at £35 per session.
 
 If £35 is more than you could consider paying for an hour of life coaching then please talk to me about that. You will still be eligible for one free session.
-
-To arrange your free introductory session please <a href="#contact">get in touch</a> today.
