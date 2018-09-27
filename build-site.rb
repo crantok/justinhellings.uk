@@ -14,6 +14,8 @@
 #       - if .md file
 #         - inflate template with yaml and content of md file
 #         - save inflated file as output/name-of-md-file/index.html
+#       - if .content directory
+#         - recurse into content directory
 #       - else
 #         - copy file to output dir
 
@@ -29,12 +31,12 @@ require 'redcarpet'
 # Load a file as a hash from yaml frontmatter and main content.
 # ASSUMPTION: All files have a frontmatter section.
 def load_file(filename)
-    
+
     has_started_frontmatter = false
     has_started_content = false
     yaml = []
     content = []
-    
+
     File.foreach(filename) do |line|
         if has_started_content
             content.push line
@@ -42,7 +44,7 @@ def load_file(filename)
             if line.start_with? '---'
                 has_started_content = true
             elsif ! line.strip.empty?
-                puts line.inspect
+                $stdout.puts line.inspect
                 yaml.push line
             end
         elsif line.start_with? '---'
@@ -51,20 +53,20 @@ def load_file(filename)
     end
 
     if !has_started_frontmatter
-        puts "ERROR: Couldn't find frontmatter!"
+        $stderr.puts "ERROR: Couldn't find frontmatter!"
         exit
     elsif !has_started_content
-        puts "ERROR: Couldn't find content!"
+        $stderr.puts "ERROR: Couldn't find content!"
         exit
     end
-    
+
     file =
         if yaml.empty?
             {}
         else
             YAML.load(yaml.join)
         end
-    
+
     # TO DO - Don't instantiate objects for every file, duh!
     file[:content] = Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(content.join)
     file
@@ -72,18 +74,18 @@ end
 
 # Load an input file, inject its content into a template, save it as an html file
 def inflate_webpage(input_file_path, output_directory)
-    
+
     context = load_file(input_file_path)
 
     basename = File.basename(input_file_path, '.md')
     if basename == 'index'
         context['is-home-page'] = true
     end
-    
+
     # mustache renders the file using the template set in config (above)
     file_contents = Mustache.render(context)
-    puts "length of rendered file: #{file_contents.length}"
-    
+    $stdout.puts "length of rendered file: #{file_contents.length}"
+
     # save file to output/index.html or output/filename/index.html
     output_file_path =
         if basename == 'index'
@@ -94,49 +96,50 @@ def inflate_webpage(input_file_path, output_directory)
         end
 
     File.write(output_file_path, file_contents)
-    
+
 end
 
-
+# For the given input_directory, process its content and copy the results to the
+# given output_directory.
 def build_directory(input_directory, output_directory)
 
-    puts "checking output directory ..."
+    $stdout.puts "checking output directory ..."
     if ! File.exist?(output_directory)
         FileUtils.mkdir(output_directory)
     end
     if File.file?(output_directory)
-        puts "#{output_directory} is a regular file. Cannot make output directory of same name."
+        $stdout.puts "#{output_directory} is a regular file. Cannot make output directory of same name."
         exit
     elsif ! Dir[output_directory+'/*'].empty?
-        puts "#{output_directory} is not empty. Cannot start build."
+        $stdout.puts "#{output_directory} is not empty. Cannot start build."
         exit
     end
 
-    puts "scanning input directory ..."
+    $stdout.puts "scanning input directory ..."
 
     files = Dir[input_directory+"/*"]
     if files  == []
-        puts "No files in #{input_directory}"
+        $stdout.puts "No files in #{input_directory}"
         return
     end
 
-    puts "processing input files ..."
+    $stdout.puts "processing input files ..."
 
     files.each do |x|
         if File.extname(x) == ".md"
             # inflate relevant template with file content
-            puts "#{x} is a content file. Inflating and copying to output dir..."
+            $stdout.puts "#{x} is a content file. Inflating and copying to output dir..."
             inflate_webpage(x, output_directory)
         elsif File.extname(x) == ".content" && File.directory?(x)
-            puts "#{x} is a content directory. Building new output dir..."
+            $stdout.puts "#{x} is a content directory. Building new output dir..."
             build_directory(x, "#{output_directory}/#{File.basename(x,'.content')}")
         else
             # copy file to output directory
-            puts "#{x} is an asset. Copying to output dir..."
+            $stdout.puts "#{x} is an asset. Copying to output dir..."
             FileUtils.cp_r(x, output_directory)
         end
     end
-    
+
 end
 
 
