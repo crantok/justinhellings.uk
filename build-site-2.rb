@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'pathname'
+require 'tmpdir'
 require 'yaml'
 require 'pp'
 
@@ -14,27 +15,60 @@ def read_input_directory(input_directory)
         return
     end
 
-    data = { type: :content_directory }
+    data = {
+      filename: File.basename(input_directory),
+      templates: [], assets: [], content_directories: [], content_files: []
+    }
 
-    files.each do |filename|
-      data[filename.basename.to_s] =
-        if filename.directory?
-          if filename.to_s.end_with?(".content")
-            read_input_directory(filename)
-          else
-            { type: :asset }
-          end
-        elsif filename.to_s.end_with? ".md"
-          YAML.load_file(filename).merge( { type: :content_file } )
-        elsif filename.to_s.end_with? "template.html"
-          { type: :raw_template_file }
+    files.each do |file|
+
+      # ?TODO?
+      # if file is normal file and ends with .yml
+      #   merge yaml into data
+      # else
+      #   ...
+      # ?TODO?
+
+      filename = file.basename.to_s
+
+      if file.directory?
+        if filename.end_with?(".content")
+          data[:content_directories].push(
+            read_input_directory( File.join(input_directory,filename) )
+          )
         else
-          { type: :asset }
+          data[:assets].push filename
         end
+      elsif filename.end_with? ".md"
+        data[:content_files].push( YAML.load_file(file).merge({filename:filename}) )
+      elsif file.to_s.end_with? "template.html"
+        data[:templates].push filename
+      else
+        data[:assets].push filename
+      end
+
     end
 
     data
 end
+
+def copy_assets(data, input_dir, output_dir)
+  puts input_dir, output_dir
+
+  Dir.mkdir(output_dir) unless Dir.exist?(output_dir)
+
+  data[:assets].each do |filename|
+    FileUtils.cp_r( File.join( input_dir, filename ), output_dir)
+  end
+
+  data[:content_directories].each do |dir|
+    copy_assets(
+      dir,
+      File.join( input_dir, dir[:filename] ),
+      File.join( output_dir, dir[:filename] ))
+  end
+end
+
 
 ####################
 # Constants + config
@@ -49,6 +83,11 @@ TEMPLATE = Dir.pwd + '/template.mustache'
 
 metadata = read_input_directory(INPUT_DIR)
 pp metadata
+
+Dir.mktmpdir do |target|
+  copy_assets(metadata, INPUT_DIR, target)
+  Dir.glob("#{target}/**/*/").each{|x|puts x}
+end
 
 # template = process_templates(metadata)
 # write_output_directory()
