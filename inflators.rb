@@ -9,8 +9,8 @@ TEMPLATE_PROCESSORS = {
 
   blog_index: {
 
-    data_selector: ->(metadata) {
-      metadata[:blog].map { |memo, (filename, file_config)|
+    data_selector: ->(all_data) {
+      all_data[:blog].map { |memo, (filename, file_config)|
         {
           href: '/' + filename,
           name: file_config[:teaser_name],

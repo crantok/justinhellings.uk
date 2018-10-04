@@ -84,6 +84,10 @@ end
 class ErrSkipDirectory < StandardError
 end
 
+def find_element_by_text doc, text
+  doc.at(":contains('#{text}'):not(:has(:contains('#{text}')))")
+end
+
 def inflate_content( data, input_dir, output_dir, parent_template = nil)
 
   begin
@@ -106,7 +110,7 @@ def inflate_content( data, input_dir, output_dir, parent_template = nil)
     end
 
     # Check template contains 'insert-content-here'
-    x = template.at('content-goes-here')
+    x = find_element_by_text template, 'content-goes-here'
     pp x
     exit
     # pp template.at(':contains("")')
