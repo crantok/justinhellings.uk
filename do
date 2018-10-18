@@ -6,6 +6,43 @@ require 'tmpdir'
 require 'yaml'
 require 'pp'
 
+###########################
+# Experiments
+
+def find_element_by_text doc, text
+  doc.at(":contains('#{text}'):not(:has(:contains('#{text}')))")
+end
+
+def replace_content doc, placeholder, content
+  doc.at("replace:contains('#{placeholder}')").replace(content)
+end
+
+
+###########################
+# Helpers
+
+def without_trailing_slash path
+  path[%r(.*[^/])]
+end
+
+
+###########################
+# Site generation functions
+
+def backup_output_directory(output_directory)
+
+  if Dir.exist?(output_directory)
+    if !Dir.empty?(output_directory)
+      File.rename(
+        output_directory,
+        "#{without_trailing_slash(output_directory)}_#{Time.now.to_i}"
+      )
+    end
+  else
+    Dir.mkdir(output_directory)
+  end
+end
+
 def read_input_directory(input_directory)
 
     $stdout.puts "scanning input directory #{input_directory} ..."
@@ -18,7 +55,7 @@ def read_input_directory(input_directory)
 
     data = {
       filename: File.basename(input_directory),
-      templates: [], assets: [], content_directories: [], content_files: []
+      assets: [], content_directories: [], content_files: []
     }
 
     files.each do |file|
@@ -42,8 +79,6 @@ def read_input_directory(input_directory)
         end
       elsif filename.end_with? ".md"
         data[:content_files].push( YAML.load_file(file).merge({filename:filename}) )
-      elsif file.to_s.end_with? "template.html"
-        data[:templates].push filename
       else
         data[:assets].push filename
       end
@@ -69,92 +104,47 @@ def create_tree_and_copy_assets(data, input_dir, output_dir)
   end
 end
 
-class ErrTooManyTemplate < StandardError
-  def initialise directory, templates
-    super "Too many templates in #{directory}\n #{data[:templates].inspect}"
-  end
-end
+def inflate_content( data, input_dir, output_dir )
 
-class ErrNoTemplateFound < StandardError
-  def initialise directory
-    super "No templates found in #{directory} and no parent template given"
-  end
-end
-
-class ErrSkipDirectory < StandardError
-end
-
-def find_element_by_text doc, text
-  doc.at(":contains('#{text}'):not(:has(:contains('#{text}')))")
-end
-
-def inflate_content( data, input_dir, output_dir, parent_template = nil)
-
-  begin
-
-    # Get the template for content in this directory or raise an appropriate
-    # error.
-    if data[:templates].count > 1
-      raise ErrTooManyTemplates, input_dir, data[:templates]
-    elsif data[:templates].empty?
-      template = parent_template
-      if not template
-        if data[:content_files].empty?
-          raise ErrSkipDirectory
-        else
-          raise ErrNoTemplateFound, input_dir
-        end
-      end
-    else # exactly one template in this directory
-      template = Nokogiri::HTML(File.read(File.join(input_dir, data[:templates].first)))
-    end
-
-    # Check template contains 'insert-content-here'
-    x = find_element_by_text template, 'content-goes-here'
-    pp x
-    exit
-    # pp template.at(':contains("")')
-
-    # If parent_template, insert current template into parent
-
-
-    # Apply template processors to template
-
-    # For each content file
-      # apply content_processors to content
-      # save file to target directory
-
-    # recurse_with_new_template
-  rescue ErrSkipDirectory
-  end
+  # For each content file
+  #   get_template( template_name ) # <- performs any necessary template processing, e.g. blog sidebar
+  #   markdown -> markup
+  #   insert content markup + metadata into template
+  #   save file
+  # end
 
   data[:content_directories].each do |dir|
     inflate_content(
       dir,
       File.join( input_dir, dir[:filename] ),
-      File.join( output_dir, dir[:filename] ),
-      template)
+      File.join( output_dir, dir[:filename] ))
   end
 end
+
 
 ####################
 # Constants + config
 
-INPUT_DIR = Dir.pwd + "/input"
-OUTPUT_DIR = Dir.pwd + "/output"
+PATHS = {
+  input: Dir.pwd + "/input",
+  templates: Dir.pwd + "/templates",
+  output: Dir.pwd + "/output"
+}.freeze
 
 
 ##################
 # main script
 
-metadata = read_input_directory(INPUT_DIR)
+backup_output_directory(PATHS[:output])
+
+metadata = read_input_directory(PATHS[:input])
 pp metadata
 
 Dir.mktmpdir do |target|
-  create_tree_and_copy_assets(metadata, INPUT_DIR, target)
+  create_tree_and_copy_assets(metadata, PATHS[:input], target)
   pp Dir.glob("#{target}/**/*/")
 
-  inflate_content(metadata, INPUT_DIR, target)
+  inflate_content(metadata, PATHS[:input], target)
   pp Dir.glob("#{target}/**/*/")
 end
 
