@@ -1,16 +1,14 @@
 #!/usr/bin/env ruby
 
-require 'nokogiri'
 require 'pathname'
 require 'tmpdir'
 require 'yaml'
 require 'pp'
 
+require './ssg_extensions'
+
 ###########################
 # Experiments
-
-TEMPLATE_PROCESSORS = []
-CONTENT_PROCESSORS = []
 
 def find_element_by_text doc, text
   doc.at(":contains('#{text}'):not(:has(:contains('#{text}')))")
@@ -21,24 +19,22 @@ def replace_content doc, placeholder, content
 end
 
 ###########################
-# Processors
-
-def process_template nokdoc
-  TEMPLATE_PROCESSORS.each do |processor|
-    nokdoc = processor(nokdoc)
-  end
-  nokdoc
-end
-
-def process_content nokdoc
-  CONTENT_PROCESSORS.each do |processor|
-    nokdoc = processor(nokdoc)
-  end
-  nokdoc
-end
-
-###########################
 # Helpers
+
+def process_template tpl
+  TEMPLATE_PROCESSORS.each do |processor|
+    tpl = processor(tpl)
+  end
+  tpl
+end
+
+def process_content doc
+  CONTENT_PROCESSORS.each do |processor|
+    doc = processor(doc)
+  end
+  doc
+end
+
 
 def without_trailing_slash path
   path[%r(.*[^/])]
@@ -57,7 +53,7 @@ end
 def get_template filename
   @templates ||= {}
   @templates[filename] ||= process_template(
-    Nokogiri::HTML.parse( load_file_without_frontmatter(filename) )
+    TEMPLATE_PARSER.parse( load_file_without_frontmatter(filename) )
   )
   @templates[filename].clone
 end
@@ -109,7 +105,7 @@ def read_input_directory(input_directory)
 
       else # file is a normal file
 
-        if filename.end_with? ".md"
+        if filename.end_with? CONTENT_SUFFIX
           data[:content_files].push( YAML.load_file(file).merge({filename:filename}) )
         elsif filename.end_with? ".yml"
           data[:config] = YAML.load_file(file).merge(data[:config])
@@ -124,6 +120,8 @@ def read_input_directory(input_directory)
 end
 
 def create_tree_and_copy_assets(data, input_dir, output_dir)
+
+  output_dir = output_dir.chomp('.content')
 
   Dir.mkdir(output_dir) unless Dir.exist?(output_dir)
 
@@ -141,18 +139,36 @@ end
 
 def inflate_content( data, input_dir, templates_dir, output_dir )
 
+  output_dir = output_dir.chomp('.content')
+
   # For each content file
-  data[:content_files].each do |file_data|
+  data[:content_files].each do |file_metadata|
 
     # fill in any holes in the file data from defaults in the directory config
-    file_data = data[:config].merge(file_data)
+    file_metadata = data[:config].merge(file_metadata)
 
-    template = get_template(File.join(templates_dir, file_data[:template]))
+    template = get_template(File.join(templates_dir, file_metadata[:template]))
 
-  #   markdown -> markup
-  #   insert content markup + metadata into template
-  #   save file
+    filename = file_metadata[:filename]
 
+    content = CONTENT_PARSER.parse(
+      File.read( File.join( input_dir, filename ) )
+    )
+
+    # ?? Where and how to insert content into the template ??
+    # ?? Where and how to insert content into the template ??
+    # ?? Where and how to insert content into the template ??
+    # ?? Where and how to insert content into the template ??
+
+    html = process_content( template_containing_content = ' ' )
+
+    outdir = output_dir
+    file_basename = File.basename(filename, CONTENT_SUFFIX)
+    if file_basename != 'index'
+      outdir = File.join(output_dir, file_basename)
+      Dir.mkdir( outdir )
+    end
+    File.write( File.join(outdir, 'index.html'), html )
   end
 
   data[:content_directories].each do |dir|
@@ -191,7 +207,7 @@ Dir.mktmpdir do |target|
   pp Dir.glob("#{target}/**/*/")
 end
 
-pp @templates
+# pp @templates
 
 # template = process_templates(metadata)
 # write_output_directory()
