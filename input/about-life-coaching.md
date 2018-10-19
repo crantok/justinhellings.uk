@@ -1,5 +1,5 @@
 ---
-html-head-title: About Life Coaching
+:html-head-title: About Life Coaching
 ---
 ## What life coaching can do for you
 

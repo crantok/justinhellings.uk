@@ -1,5 +1,5 @@
 ---
-html-head-title: Mindfulness
+:html-head-title: Mindfulness
 ---
 ## How useful is Mindfulness?
 

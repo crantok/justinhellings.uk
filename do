@@ -9,6 +9,9 @@ require 'pp'
 ###########################
 # Experiments
 
+TEMPLATE_PROCESSORS = []
+CONTENT_PROCESSORS = []
+
 def find_element_by_text doc, text
   doc.at(":contains('#{text}'):not(:has(:contains('#{text}')))")
 end
@@ -17,6 +20,22 @@ def replace_content doc, placeholder, content
   doc.at("replace:contains('#{placeholder}')").replace(content)
 end
 
+###########################
+# Processors
+
+def process_template nokdoc
+  TEMPLATE_PROCESSORS.each do |processor|
+    nokdoc = processor(nokdoc)
+  end
+  nokdoc
+end
+
+def process_content nokdoc
+  CONTENT_PROCESSORS.each do |processor|
+    nokdoc = processor(nokdoc)
+  end
+  nokdoc
+end
 
 ###########################
 # Helpers
@@ -25,6 +44,23 @@ def without_trailing_slash path
   path[%r(.*[^/])]
 end
 
+def load_file_without_frontmatter filename
+  lines = File.read(filename).lines
+  if lines.first == "---\n"
+    start = lines[1..-1].find_index("---\n") + 1
+    lines[start..-1].join
+  else
+    lines.join
+  end
+end
+
+def get_template filename
+  @templates ||= {}
+  @templates[filename] ||= process_template(
+    Nokogiri::HTML.parse( load_file_without_frontmatter(filename) )
+  )
+  @templates[filename].clone
+end
 
 ###########################
 # Site generation functions
@@ -55,21 +91,14 @@ def read_input_directory(input_directory)
 
     data = {
       filename: File.basename(input_directory),
-      assets: [], content_directories: [], content_files: []
+      config: {}, assets: [], content_files: [], content_directories: []
     }
 
     files.each do |file|
-
-      # ?TODO?
-      # if file is normal file and ends with .yml
-      #   merge yaml into data
-      # else
-      #   ...
-      # ?TODO?
-
       filename = file.basename.to_s
 
       if file.directory?
+
         if filename.end_with?(".content")
           data[:content_directories].push(
             read_input_directory( File.join(input_directory,filename) )
@@ -77,12 +106,18 @@ def read_input_directory(input_directory)
         else
           data[:assets].push filename
         end
-      elsif filename.end_with? ".md"
-        data[:content_files].push( YAML.load_file(file).merge({filename:filename}) )
-      else
-        data[:assets].push filename
-      end
 
+      else # file is a normal file
+
+        if filename.end_with? ".md"
+          data[:content_files].push( YAML.load_file(file).merge({filename:filename}) )
+        elsif filename.end_with? ".yml"
+          data[:config] = YAML.load_file(file).merge(data[:config])
+        else
+          data[:assets].push filename
+        end
+
+      end
     end
 
     data
@@ -104,19 +139,27 @@ def create_tree_and_copy_assets(data, input_dir, output_dir)
   end
 end
 
-def inflate_content( data, input_dir, output_dir )
+def inflate_content( data, input_dir, templates_dir, output_dir )
 
   # For each content file
-  #   get_template( template_name ) # <- performs any necessary template processing, e.g. blog sidebar
+  data[:content_files].each do |file_data|
+
+    # fill in any holes in the file data from defaults in the directory config
+    file_data = data[:config].merge(file_data)
+
+    template = get_template(File.join(templates_dir, file_data[:template]))
+
   #   markdown -> markup
   #   insert content markup + metadata into template
   #   save file
-  # end
+
+  end
 
   data[:content_directories].each do |dir|
     inflate_content(
       dir,
       File.join( input_dir, dir[:filename] ),
+      templates_dir,
       File.join( output_dir, dir[:filename] ))
   end
 end
@@ -144,9 +187,11 @@ Dir.mktmpdir do |target|
   create_tree_and_copy_assets(metadata, PATHS[:input], target)
   pp Dir.glob("#{target}/**/*/")
 
-  inflate_content(metadata, PATHS[:input], target)
+  inflate_content(metadata, PATHS[:input], PATHS[:templates], target)
   pp Dir.glob("#{target}/**/*/")
 end
+
+pp @templates
 
 # template = process_templates(metadata)
 # write_output_directory()

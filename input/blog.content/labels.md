@@ -1,5 +1,5 @@
 ---
-html-head-title: "Labels: Gift or burden?"
+:html-head-title: "Labels: Gift or burden?"
 ---
 ## Labels: A gift or a burden?
 
