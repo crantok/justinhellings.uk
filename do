@@ -21,21 +21,6 @@ end
 ###########################
 # Helpers
 
-def process_template tpl
-  TEMPLATE_PROCESSORS.each do |processor|
-    tpl = processor(tpl)
-  end
-  tpl
-end
-
-def process_content doc
-  CONTENT_PROCESSORS.each do |processor|
-    doc = processor(doc)
-  end
-  doc
-end
-
-
 def without_trailing_slash path
   path[%r(.*[^/])]
 end
@@ -52,11 +37,19 @@ end
 
 def get_template filename
   @templates ||= {}
-  @templates[filename] ||= process_template(
-    TEMPLATE_PARSER.parse( load_file_without_frontmatter(filename) )
+  @templates[filename] ||=
+  TEMPLATE_PROCESSOR.process(
+    load_file_without_frontmatter(
+      filename
+    )
   )
   @templates[filename].clone
 end
+
+def is_content_file path
+  CONTENT_SUFFIXES.contain?( File.extname(path) )
+end
+
 
 ###########################
 # Site generation functions
@@ -105,7 +98,7 @@ def read_input_directory(input_directory)
 
       else # file is a normal file
 
-        if filename.end_with? CONTENT_SUFFIX
+        if is_content_file filename
           data[:content_files].push( YAML.load_file(file).merge({filename:filename}) )
         elsif filename.end_with? ".yml"
           data[:config] = YAML.load_file(file).merge(data[:config])
@@ -151,19 +144,17 @@ def inflate_content( data, input_dir, templates_dir, output_dir )
 
     filename = file_metadata[:filename]
 
-    content = CONTENT_PARSER.parse(
-      File.read( File.join( input_dir, filename ) )
-    )
+    content = CONTENT_PARSER.parse( File.read( File.join( input_dir, filename ) ) )
 
     # ?? Where and how to insert content into the template ??
     # ?? Where and how to insert content into the template ??
     # ?? Where and how to insert content into the template ??
     # ?? Where and how to insert content into the template ??
 
-    html = process_content( template_containing_content = ' ' )
+    html = CONTENT_PROCESSOR.process( template_containing_content = ' ' )
 
     outdir = output_dir
-    file_basename = File.basename(filename, CONTENT_SUFFIX)
+    file_basename = File.basename(filename, '.*')
     if file_basename != 'index'
       outdir = File.join(output_dir, file_basename)
       Dir.mkdir( outdir )

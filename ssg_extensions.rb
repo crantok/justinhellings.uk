@@ -5,16 +5,42 @@
 require 'redcarpet'
 require 'nokogiri'
 
-TEMPLATE_PARSER = Nokogiri::HTML
 
-CONTENT_SUFFIX = '.md'
+CONTENT_SUFFIXES = ['.md']
 
-CONTENT_PARSER = Class.new do
+
+TEMPLATE_PROCESSOR = Class.new do
+
+  PROCESSORS = [
+  ]
+
+  def self.parse raw_template
+    Nokogiri::HTML.parse raw_template
+  end
+
+  def self.process raw_template
+    PROCESSORS.reduce( parse(raw_template) ) do | memo, func |
+      func.call(memo)
+    end
+  end
+end
+
+
+CONTENT_PROCESSOR = Class.new do
   def self.parse raw_content
     Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(raw_content)
   end
 end
 
-TEMPLATE_PROCESSORS = []
 
-CONTENT_PROCESSORS = []
+CONTENT_PROCESSOR = Class.new do
+
+  PROCESSORS = [
+  ]
+
+  def self.process raw_content
+    PROCESSORS.reduce( parse(raw_content) ) do | memo, func |
+      func.call(memo)
+    end
+  end
+end
