@@ -7,16 +7,6 @@ require 'pp'
 
 require './ssg_extensions'
 
-###########################
-# Experiments
-
-def find_element_by_text doc, text
-  doc.at(":contains('#{text}'):not(:has(:contains('#{text}')))")
-end
-
-def replace_content doc, placeholder, content
-  doc.at("replace:contains('#{placeholder}')").replace(content)
-end
 
 ###########################
 # Helpers
@@ -47,7 +37,7 @@ def get_template filename
 end
 
 def is_content_file path
-  CONTENT_SUFFIXES.contain?( File.extname(path) )
+  CONTENT_SUFFIXES.include?( File.extname(path) )
 end
 
 
@@ -190,15 +180,10 @@ backup_output_directory(PATHS[:output])
 metadata = read_input_directory(PATHS[:input])
 pp metadata
 
-Dir.mktmpdir do |target|
-  create_tree_and_copy_assets(metadata, PATHS[:input], target)
-  pp Dir.glob("#{target}/**/*/")
+create_tree_and_copy_assets(metadata, PATHS[:input], PATHS[:output])
+pp Dir.glob("#{PATHS[:output]}/**/*/")
 
-  inflate_content(metadata, PATHS[:input], PATHS[:templates], target)
-  pp Dir.glob("#{target}/**/*/")
-end
+inflate_content(metadata, PATHS[:input], PATHS[:templates], PATHS[:output])
+pp Dir.glob("#{PATHS[:output]}/**/*/")
 
-# pp @templates
-
-# template = process_templates(metadata)
 # write_output_directory()
