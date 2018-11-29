@@ -25,18 +25,29 @@ def load_file_without_frontmatter filename
   end
 end
 
-def get_template filename
+def get_template filename, all_metadata
   @templates ||= {}
-  @templates[filename] ||=
-  TEMPLATE_PROCESSOR.process(
-    load_file_without_frontmatter(
-      filename
-    )
-  )
+  @templates[filename] ||= TEMPLATE_PROCESSOR.process(
+    load_file_without_frontmatter( filename ), all_metadata )
   @templates[filename].clone
 end
 
-def is_content_file path
+# Determine the name for a generated html file.
+# All files are saved as "index.html". This creates clean URLs without any need
+# for server-side settings.
+def get_content_output_filename output_dir, filename
+
+  file_basename = File.basename(filename, '.*')
+
+  if file_basename != 'index'
+    output_dir = File.join(output_dir, file_basename)
+    Dir.mkdir( output_dir )
+  end
+
+  File.join(output_dir, 'index.html')
+end
+
+def content_file? path
   CONTENT_SUFFIXES.include?( File.extname(path) )
 end
 
@@ -88,7 +99,7 @@ def read_input_directory(input_directory)
 
       else # file is a normal file
 
-        if is_content_file filename
+        if content_file? filename
           data[:content_files].push( YAML.load_file(file).merge({filename:filename}) )
         elsif filename.end_with? ".yml"
           data[:config] = YAML.load_file(file).merge(data[:config])
@@ -104,8 +115,6 @@ end
 
 def create_tree_and_copy_assets(data, input_dir, output_dir)
 
-  output_dir = output_dir.chomp('.content')
-
   Dir.mkdir(output_dir) unless Dir.exist?(output_dir)
 
   data[:assets].each do |filename|
@@ -116,48 +125,43 @@ def create_tree_and_copy_assets(data, input_dir, output_dir)
     create_tree_and_copy_assets(
       dir,
       File.join( input_dir, dir[:filename] ),
-      File.join( output_dir, dir[:filename] ))
+      File.join( output_dir, dir[:filename] ).chomp('.content')
+    )
   end
 end
 
-def inflate_content( data, input_dir, templates_dir, output_dir )
-
-  output_dir = output_dir.chomp('.content')
+def inflate_content( all_data, dir_data, input_dir, output_dir, templates_dir )
 
   # For each content file
-  data[:content_files].each do |file_metadata|
+  dir_data[:content_files].each do |file_metadata|
 
     # fill in any holes in the file data from defaults in the directory config
-    file_metadata = data[:config].merge(file_metadata)
+    file_metadata = dir_data[:config].merge(file_metadata)
 
-    template = get_template(File.join(templates_dir, file_metadata[:template]))
+    template = get_template(
+      File.join(templates_dir, file_metadata[:template]), all_data )
 
-    filename = file_metadata[:filename]
+    html = CONTENT_PROCESSOR.process(
+      load_file_without_frontmatter( File.join( input_dir, file_metadata[:filename] ) ),
+      template,
+      file_metadata
+    )
 
-    content = CONTENT_PARSER.parse( File.read( File.join( input_dir, filename ) ) )
+    output_filename =
+      get_content_output_filename( output_dir, file_metadata[:filename] )
 
-    # ?? Where and how to insert content into the template ??
-    # ?? Where and how to insert content into the template ??
-    # ?? Where and how to insert content into the template ??
-    # ?? Where and how to insert content into the template ??
-
-    html = CONTENT_PROCESSOR.process( template_containing_content = ' ' )
-
-    outdir = output_dir
-    file_basename = File.basename(filename, '.*')
-    if file_basename != 'index'
-      outdir = File.join(output_dir, file_basename)
-      Dir.mkdir( outdir )
-    end
-    File.write( File.join(outdir, 'index.html'), html )
+    File.write( output_filename, html )
   end
 
-  data[:content_directories].each do |dir|
+  # For each content sub-directory
+  dir_data[:content_directories].each do |dir|
     inflate_content(
+      all_data,
       dir,
       File.join( input_dir, dir[:filename] ),
+      File.join( output_dir, dir[:filename].chomp('.content') ),
       templates_dir,
-      File.join( output_dir, dir[:filename] ))
+    )
   end
 end
 
@@ -178,12 +182,7 @@ PATHS = {
 backup_output_directory(PATHS[:output])
 
 metadata = read_input_directory(PATHS[:input])
-pp metadata
 
 create_tree_and_copy_assets(metadata, PATHS[:input], PATHS[:output])
-pp Dir.glob("#{PATHS[:output]}/**/*/")
 
-inflate_content(metadata, PATHS[:input], PATHS[:templates], PATHS[:output])
-pp Dir.glob("#{PATHS[:output]}/**/*/")
-
-# write_output_directory()
+inflate_content(metadata, metadata, PATHS[:input], PATHS[:output], PATHS[:templates])

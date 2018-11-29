@@ -5,7 +5,7 @@
 
 <div class="about-justin-hellings-flex-container">
     <div class="box">
-        <img src="/img/justin-hellings-photo.jpg">
+        <img src="/assets/img/justin-hellings-photo.jpg">
     </div>
     <div class="box">
         <p>I want to empower as many people as I can to live the lives they want. I find it incredibly satisfying when the people I work with realise that what they want is achievable, and I want to do this for you.</p>
