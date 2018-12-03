@@ -6,6 +6,12 @@ require 'yaml'
 
 class StaticSiteGenerator
 
+  # +template_processor+ must fulfil
+  # * process_template ( template_content [String], site_metadata [Hash] ) -> template [client-defined object]
+  # +content_processor+ must fulfil
+  # * :content_file? ( filename ) -> [Boolean]
+  # * :process_content ( content [String], template [client-defined object], file_metadata [Hash] ) -> html [String]
+  # Clients may of course supply the same object to fulfil both interfaces.
   def initialize template_processor, content_processor
     check_interface :template_processor, template_processor, :process_template
     check_interface :content_processor, content_processor, :content_file?
@@ -14,6 +20,8 @@ class StaticSiteGenerator
     @template_processor = template_processor
   end
 
+  # Generate a website in +output_dir+ from the contents of +input_dir+ and
+  # +templates_dir+
   def generate input_dir, output_dir, templates_dir
     backup_output_directory(output_dir)
     metadata = read_input_directory(input_dir)
@@ -31,7 +39,7 @@ class StaticSiteGenerator
   def check_interface param_name, obj, method_name
     return if obj.respond_to? method_name
 
-    msg = "#{param_name} must respond to `#{method_name}`."
+    msg = "#{self.class.name}: #{param_name} must respond to `#{method_name}`."
 
     if obj.class == Class  &&  obj.instance_methods.include?(method_name)
       msg +=

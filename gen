@@ -22,10 +22,6 @@ class TemplateProcessor
   private
 
   PROCESSORS = [
-    # Testing that passing template straight through works
-    ->(template, metadata) do
-      template
-    end,
 
     ->(template, metadata) do
       if template.at_css(".blog-posts")
@@ -78,6 +74,7 @@ class ContentProcessor
   end
 
   PROCESSORS = [
+
     # Set the head title element.
     ->(content, file_meta) do
       title = content.at_css("html head title")
@@ -86,6 +83,7 @@ class ContentProcessor
       title.content = file_meta[:'html-head-title'] + suffix
       content
     end
+
   ]
 end
 
