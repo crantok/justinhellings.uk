@@ -56,15 +56,16 @@ class StaticSiteGenerator
     end
   end
 
-  def get_template filename, all_metadata
+  def get_template filename, all_meta
     @templates ||= {}
     @templates[filename] ||= @template_processor.process_template(
-      load_file_without_frontmatter( filename ), all_metadata )
+      load_file_without_frontmatter( filename ), all_meta
+    )
   end
 
   # Determine the name for a generated html file.
-  # All files are saved as "index.html". This creates clean URLs without any need
-  # for server-side settings.
+  # All web pages are saved as "index.html". This creates clean URLs without
+  # any need for server-side settings.
   def get_content_output_filename output_dir, filename
 
     file_basename = File.basename(filename, '.*')
@@ -81,32 +82,32 @@ class StaticSiteGenerator
   ###########################
   # Site generation functions
 
-  def backup_output_directory(output_directory)
+  def backup_output_directory(output_dir)
 
-    if Dir.exist?(output_directory)
-      if !Dir.empty?(output_directory)
+    if Dir.exist?(output_dir)
+      if !Dir.empty?(output_dir)
         File.rename(
-          output_directory,
-          "#{without_trailing_slash(output_directory)}_#{Time.now.to_i}"
+          output_dir,
+          "#{without_trailing_slash(output_dir)}_#{Time.now.to_i}"
         )
       end
     else
-      Dir.mkdir(output_directory)
+      Dir.mkdir(output_dir)
     end
   end
 
-  def read_input_directory(input_directory)
+  def read_input_directory(input_dir)
 
-      $stdout.puts "scanning input directory #{input_directory} ..."
+      $stdout.puts "scanning input directory #{input_dir} ..."
 
-      files = Pathname.new(input_directory).children
+      files = Pathname.new(input_dir).children
       if files  == []
-          $stderr.puts "No files in #{input_directory}"
+          $stderr.puts "No files in #{input_dir}"
           return
       end
 
-      data = {
-        filename: File.basename(input_directory),
+      dir_meta = {
+        filename: File.basename(input_dir),
         config: {}, assets: [], content_files: [], content_directories: []
       }
 
@@ -116,76 +117,76 @@ class StaticSiteGenerator
         if file.directory?
 
           if filename.end_with?(".content")
-            data[:content_directories].push(
-              read_input_directory( File.join(input_directory,filename) )
+            dir_meta[:content_directories].push(
+              read_input_directory( File.join(input_dir,filename) )
             )
           else
-            data[:assets].push filename
+            dir_meta[:assets].push filename
           end
 
         else # file is a normal file
 
           if @content_processor.content_file? filename
-            data[:content_files].push( YAML.load_file(file).merge({filename:filename}) )
+            dir_meta[:content_files].push( YAML.load_file(file).merge({filename:filename}) )
           elsif filename.end_with? ".yml"
-            data[:config] = YAML.load_file(file).merge(data[:config])
+            dir_meta[:config] = YAML.load_file(file).merge(dir_meta[:config])
           else
-            data[:assets].push filename
+            dir_meta[:assets].push filename
           end
 
         end
       end
 
-      data
+      dir_meta
   end
 
-  def create_tree_and_copy_assets(data, input_dir, output_dir)
+  def create_tree_and_copy_assets(dir_meta, input_dir, output_dir)
 
     Dir.mkdir(output_dir) unless Dir.exist?(output_dir)
 
-    data[:assets].each do |filename|
+    dir_meta[:assets].each do |filename|
       FileUtils.cp_r( File.join( input_dir, filename ), output_dir)
     end
 
-    data[:content_directories].each do |dir|
+    dir_meta[:content_directories].each do |subdir_meta|
       create_tree_and_copy_assets(
-        dir,
-        File.join( input_dir, dir[:filename] ),
-        File.join( output_dir, dir[:filename] ).chomp('.content')
+        subdir_meta,
+        File.join( input_dir, subdir_meta[:filename] ),
+        File.join( output_dir, subdir_meta[:filename] ).chomp('.content')
       )
     end
   end
 
-  def inflate_content( all_data, dir_data, input_dir, output_dir, templates_dir )
+  def inflate_content( all_meta, dir_meta, input_dir, output_dir, templates_dir )
 
     # For each content file
-    dir_data[:content_files].each do |file_metadata|
+    dir_meta[:content_files].each do |file_meta|
 
-      # fill in any holes in the file data from defaults in the directory config
-      file_metadata = dir_data[:config].merge(file_metadata)
+      # fill in any holes in the file metadata from defaults in the directory config
+      file_meta = dir_meta[:config].merge(file_meta)
 
       template = get_template(
-        File.join(templates_dir, file_metadata[:template]), all_data )
+        File.join(templates_dir, file_meta[:template]), all_meta )
 
       html = @content_processor.process_content(
-        load_file_without_frontmatter( File.join( input_dir, file_metadata[:filename] ) ),
+        load_file_without_frontmatter( File.join( input_dir, file_meta[:filename] ) ),
         template,
-        file_metadata
+        file_meta
       )
 
       output_filename =
-        get_content_output_filename( output_dir, file_metadata[:filename] )
+        get_content_output_filename( output_dir, file_meta[:filename] )
 
       File.write( output_filename, html )
     end
 
     # For each content sub-directory
-    dir_data[:content_directories].each do |dir|
+    dir_meta[:content_directories].each do |subdir_meta|
       inflate_content(
-        all_data,
-        dir,
-        File.join( input_dir, dir[:filename] ),
-        File.join( output_dir, dir[:filename].chomp('.content') ),
+        all_meta,
+        subdir_meta,
+        File.join( input_dir, subdir_meta[:filename] ),
+        File.join( output_dir, subdir_meta[:filename].chomp('.content') ),
         templates_dir,
       )
     end

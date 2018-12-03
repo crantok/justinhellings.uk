@@ -14,16 +14,12 @@ require 'pp'
 class TemplateProcessor
 
   def self.process_template raw_template, all_metadata
-    PROCESSORS.reduce( parse(raw_template) ) do | memo, func |
+    PROCESSORS.reduce( Nokogiri::HTML.parse(raw_template) ) do | memo, func |
       func.call(memo, all_metadata)
     end
   end
 
   private
-
-  def self.parse raw_template
-    Nokogiri::HTML.parse raw_template
-  end
 
   PROCESSORS = [
     # Testing that passing template straight through works
@@ -70,11 +66,14 @@ class ContentProcessor
   private
 
   def self.templated_content markdown, template
+    # Important? Do not alter cached copy. Clone.
     template = template.clone
+
     main = template.at_css("main")
     main.content = ""
     main.add_child(
       Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(markdown) )
+
     template
   end
 
