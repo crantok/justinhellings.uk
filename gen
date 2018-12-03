@@ -57,9 +57,9 @@ class ContentProcessor
     return filename.end_with? '.md'
   end
 
-  def self.process_content markdown, template, metadata
+  def self.process_content markdown, template, file_meta
     PROCESSORS.reduce( templated_content(markdown, template) ) do | memo, func |
-      func.call(memo, metadata)
+      func.call(memo, file_meta)
     end
   end
 
@@ -78,8 +78,12 @@ class ContentProcessor
   end
 
   PROCESSORS = [
-    # Testing that passing content straight through works
-    ->(content, metadata) do
+    # Set the head title element.
+    ->(content, file_meta) do
+      title = content.at_css("html head title")
+      tpl_title = title.content
+      suffix = tpl_title[tpl_title.index(' | ')..-1]
+      title.content = file_meta[:'html-head-title'] + suffix
       content
     end
   ]
