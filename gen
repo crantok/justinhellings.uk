@@ -1,29 +1,29 @@
-# ssg_extensions.rb
+#!/usr/bin/env ruby
 #
-# Site-specific code for the static site generator.
+# Create a website from:
+#  - plain html template files
+#  - markdown content files
+#  - nokogiri content insertion
 
+require './static_site_generator'
 require 'redcarpet'
 require 'nokogiri'
-
-###########################
-# Experiments
-
-def find_element_by_text doc, text
-  doc.at(":contains('#{text}'):not(:has(:contains('#{text}')))")
-end
-
-def replace_content doc, placeholder, content
-  doc.at("replace:contains('#{placeholder}')").replace(content)
-end
-
-
-###########################
-# Extensions interface
-
-CONTENT_SUFFIXES = ['.md']
+require 'pp'
 
 
 class TemplateProcessor
+
+  def self.process_template raw_template, all_metadata
+    PROCESSORS.reduce( parse(raw_template) ) do | memo, func |
+      func.call(memo, all_metadata)
+    end
+  end
+
+  private
+
+  def self.parse raw_template
+    Nokogiri::HTML.parse raw_template
+  end
 
   PROCESSORS = [
     # Testing that passing template straight through works
@@ -52,30 +52,25 @@ class TemplateProcessor
       template # pass straight through for now
     end
   ]
-
-  def self.parse raw_template
-    Nokogiri::HTML.parse raw_template
-  end
-
-  def self.process raw_template, all_metadata
-    PROCESSORS.reduce( parse(raw_template) ) do | memo, func |
-      func.call(memo, all_metadata)
-    end
-  end
 end
-TEMPLATE_PROCESSOR = TemplateProcessor
 
 
 class ContentProcessor
 
-  PROCESSORS = [
-    # Testing that passing content straight through works
-    ->(content, metadata) do
-      content
+  def self.content_file? filename
+    return filename.end_with? '.md'
+  end
+
+  def self.process_content markdown, template, metadata
+    PROCESSORS.reduce( templated_content(markdown, template) ) do | memo, func |
+      func.call(memo, metadata)
     end
-  ]
+  end
+
+  private
 
   def self.templated_content markdown, template
+    template = template.clone
     main = template.at_css("main")
     main.content = ""
     main.add_child(
@@ -83,10 +78,14 @@ class ContentProcessor
     template
   end
 
-  def self.process markdown, template, metadata
-    PROCESSORS.reduce( templated_content(markdown, template) ) do | memo, func |
-      func.call(memo, metadata)
+  PROCESSORS = [
+    # Testing that passing content straight through works
+    ->(content, metadata) do
+      content
     end
-  end
+  ]
 end
-CONTENT_PROCESSOR = ContentProcessor
+
+
+ssg = StaticSiteGenerator.new TemplateProcessor, ContentProcessor
+ssg.generate Dir.pwd + "/input", Dir.pwd + "/output", Dir.pwd + "/templates"
