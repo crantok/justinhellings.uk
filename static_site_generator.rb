@@ -1,6 +1,6 @@
 
+require 'fileutils'
 require 'pathname'
-require 'tmpdir'
 require 'yaml'
 
 
@@ -100,6 +100,8 @@ class StaticSiteGenerator
 
       $stdout.puts "scanning input directory #{input_dir} ..."
 
+      # Using Pathname::children rather than Dir::children for greater
+      # backwards compatibility.
       files = Pathname.new(input_dir).children
       if files  == []
           $stderr.puts "No files in #{input_dir}"
