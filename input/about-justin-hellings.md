@@ -1,5 +1,5 @@
 ---
-:html-head-title: About Justin Hellings
+:html_head_title: About Justin Hellings
 ---
 ## About Me
 

@@ -21,10 +21,19 @@ class TemplateProcessor
 
   PROCESSORS = [
 
+    # Populate the blog-post sidebar.
     ->(template, metadata) do
       if template.at_css(".blog-posts")
         blog_meta = metadata[:content_directories].find {|dir| dir[:filename] == 'blog.content'}
-        pp blog_meta
+
+        posts = blog_meta[:content_files]
+        .select do |file_meta|
+          # - by default, blog posts are *not* published
+          # - index.md is a symlink, not a blog post
+          file_meta[:published] && ( file_meta[:filename] != 'index.md' )
+        end
+        .sort { |a,b| b[:date] <=> a[:date] } # latest first
+        pp posts
 
         # blog_meta[:content_files].map { |memo, file_meta|
         #   {
@@ -52,17 +61,17 @@ class ContentProcessor
   end
 
   def self.process_content markdown, template, file_meta
-    PROCESSORS.reduce( templated_content(markdown, template) ) do | memo, func |
-      func.call(memo, file_meta)
+    PROCESSORS.reduce( templated_content(markdown, template) ) do | doc, func |
+      func.call(doc, file_meta)
     end
   end
 
   def self.templated_content markdown, template
-    # Important? Do not alter cached copy. Clone.
+    # Is this important? Do not alter cached copy of template. Clone.
     template = template.clone
 
-    main = template.at_css("main")
-    main.content = ""
+    main = template.at_css('main.blog-post .content') || template.at_css('main')
+    main.content = ''
     main.add_child(
       Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(markdown)
     )
@@ -70,30 +79,66 @@ class ContentProcessor
     template
   end
 
+  def self.day_ordinal date
+    english_ordinal date.day
+  end
+
+  def self.english_ordinal n
+    str = n.to_s
+    str +
+    case str
+    when /11$/, /12$/, /13$/
+      'th'
+    when /1$/
+      'st'
+    when /2$/
+      'nd'
+    when /3$/
+      'rd'
+    else
+      'th'
+    end
+  end
+
   PROCESSORS = [
 
     # Set the head title element.
-    ->(content, file_meta) do
-      title = content.at_css("html head title")
+    ->(doc, file_meta) do
+      title = doc.at_css("html head title")
       tpl_title = title.content
       suffix = tpl_title[tpl_title.index(' | ')..-1]
-      title.content = file_meta[:'html-head-title'] + suffix
-      content
+      title.content = file_meta[:html_head_title] + suffix
+      doc
     end,
 
     # Set the active menu option
-    ->(content, file_meta) do
+    ->(doc, file_meta) do
       case file_meta[:template]
       when 'home.template.html'
-        menu_item = content.at_css('#top-menu a[href="/"]')
+        menu_item = doc.at_css('#top-menu a[href="/"]')
       when 'page.template.html'
-        menu_item = content.at_css("#top-menu a[href='/#{file_meta[:filename].chomp('.md')}']")
+        menu_item = doc.at_css("#top-menu a[href='/#{file_meta[:filename].chomp('.md')}']")
       when 'blog.template.html'
-        menu_item = content.at_css('#top-menu a[href="/blog"]')
+        menu_item = doc.at_css('#top-menu a[href="/blog"]')
       end
+      # menu_item.parent.set_attribute('is-active', 'true') if menu_item
       menu_item.set_attribute('is-active', 'true') if menu_item
-      content
+      doc
+    end,
+
+    # Set blog-post metadata
+    ->(doc, file_meta) do
+      return doc if file_meta[:template] != 'blog.template.html'
+
+      doc.at_css('main h2').content =
+        file_meta[:post_title] || file_meta[:html_head_title]
+      doc.at_css('main .blog-meta .date').content =
+        day_ordinal(file_meta[:date]) + file_meta[:date].strftime( " %B %Y")
+
+      doc
     end
+
+    # TODO: Set the active blog post in the sidebar
 
   ]
 end

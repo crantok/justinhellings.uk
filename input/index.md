@@ -1,5 +1,5 @@
 ---
-:html-head-title: Free Life Coaching Session
+:html_head_title: Free Life Coaching Session
 :template: home.template.html
 ---
 ## Free introductory coaching session

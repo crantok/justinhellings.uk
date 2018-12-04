@@ -1,8 +1,9 @@
 ---
-:html-head-title: "Labels: Gift or burden?"
+:html_head_title: "Labels: Gift or burden?"
+:post_title: "Labels: A gift or a burden?"
+:date: 2018-12-04
+:published: true
 ---
-## Labels: A gift or a burden?
-
 ### What are labels?
 
 Labels are shorthand descriptions. They are a summary. When we say someone is extrovert, we don't mean that they act in exactly the same way as all other extroverts but we do make assumptions about them. Of course, being a summary, we may all have different ideas of what extroversion is and may be making different assumptions.

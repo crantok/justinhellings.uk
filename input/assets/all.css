@@ -200,6 +200,15 @@ img {
     margin-right: auto;
 }
 
+.blog-meta {
+  width: 100%;
+  height: 1.5em;
+}
+
+.blog-meta .date {
+  float: right;
+}
+
 @media screen and (min-width: 500px) {
     body.home-page .hero-text {
         max-width: 480px;

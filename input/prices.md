@@ -1,5 +1,5 @@
 ---
-:html-head-title: Prices
+:html_head_title: Prices
 ---
 ## One free session
 
