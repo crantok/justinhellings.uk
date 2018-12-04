@@ -19,8 +19,6 @@ class TemplateProcessor
     end
   end
 
-  private
-
   PROCESSORS = [
 
     ->(template, metadata) do
@@ -59,8 +57,6 @@ class ContentProcessor
     end
   end
 
-  private
-
   def self.templated_content markdown, template
     # Important? Do not alter cached copy. Clone.
     template = template.clone
@@ -68,7 +64,8 @@ class ContentProcessor
     main = template.at_css("main")
     main.content = ""
     main.add_child(
-      Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(markdown) )
+      Redcarpet::Markdown.new(Redcarpet::Render::HTML.new).render(markdown)
+    )
 
     template
   end
@@ -81,6 +78,20 @@ class ContentProcessor
       tpl_title = title.content
       suffix = tpl_title[tpl_title.index(' | ')..-1]
       title.content = file_meta[:'html-head-title'] + suffix
+      content
+    end,
+
+    # Set the active menu option
+    ->(content, file_meta) do
+      case file_meta[:template]
+      when 'home.template.html'
+        menu_item = content.at_css('#top-menu a[href="/"]')
+      when 'page.template.html'
+        menu_item = content.at_css("#top-menu a[href='/#{file_meta[:filename].chomp('.md')}']")
+      when 'blog.template.html'
+        menu_item = content.at_css('#top-menu a[href="/blog"]')
+      end
+      menu_item.set_attribute('is-active', 'true') if menu_item
       content
     end
 
