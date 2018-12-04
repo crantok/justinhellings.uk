@@ -204,3 +204,21 @@ class StaticSiteGenerator
     end
   end
 end
+
+# Absolutely *not* the correct place to put this...
+def english_ordinal n
+  str = n.to_s
+  str +
+  case str
+  when /11$/, /12$/, /13$/
+    'th'
+  when /1$/
+    'st'
+  when /2$/
+    'nd'
+  when /3$/
+    'rd'
+  else
+    'th'
+  end
+end
