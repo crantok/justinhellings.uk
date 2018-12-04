@@ -11,6 +11,14 @@ require 'nokogiri'
 require 'pp'
 
 
+CONTENT_EXTENSION = '.md'
+
+
+def no_ext filename
+  File.basename(filename, '.*')
+end
+
+
 class TemplateProcessor
 
   def self.process_template raw_template, all_metadata
@@ -23,32 +31,40 @@ class TemplateProcessor
 
     # Populate the blog-post sidebar.
     ->(template, metadata) do
-      if template.at_css(".blog-posts")
-        blog_meta = metadata[:content_directories].find {|dir| dir[:filename] == 'blog.content'}
+      return template if ! template.at_css(".blog-posts")
 
-        posts = blog_meta[:content_files]
-        .select do |file_meta|
-          # - by default, blog posts are *not* published
-          # - index.md is a symlink, not a blog post
-          file_meta[:published] && ( file_meta[:filename] != 'index.md' )
-        end
-        .sort { |a,b| b[:date] <=> a[:date] } # latest first
-        pp posts
+      blog_meta = metadata[:content_directories].find {|dir| dir[:filename] == 'blog.content'}
 
-        # blog_meta[:content_files].map { |memo, file_meta|
-        #   {
-        #     href: '/' + filename,
-        #     name: file_meta[:teaser_name],
-        #     summary: file_meta[:teaser_summary],
-        #     date: file_meta[:date],
-        #     year: file_meta[:date].year
-        #   }
-        # }.sort { |a,b| -(a[:date] <=> b[:date]) }
-
-
-        #squirt blog posts into sidebar
+      posts = blog_meta[:content_files]
+      .select do |file_meta|
+        # - by default, blog posts are *not* published
+        # - index.md is a symlink, not a blog post
+        file_meta[:published] && ( file_meta[:filename] != 'index.md' )
       end
-      template # pass straight through for now
+      .sort { |a,b| b[:date] <=> a[:date] } # latest first
+
+      list = template.at_css('sidebar.blog-posts ul')
+      listings = list.css('li')
+
+      posts.each_with_index do | post, i |
+        li = if i < listings.count then listings[i] else listings.first.clone end
+          pp li
+
+        li.at_css('h3 a').content =
+        post[:post_title] || post[:html_head_title]
+        li.at_css('h3 a')[:href] = "/blog/" + no_ext(post[:filename])
+
+        li.at_css('date').content = post[:date]
+        li.at_css('p').content = post[:teaser]
+
+        list.add_child(li) if ! listings.include? li
+      end
+
+      if listings.count > posts.count
+        (posts.count ... listings.count).each { |i| listings[i].remove }
+      end
+
+      template
     end
   ]
 end
@@ -57,7 +73,7 @@ end
 class ContentProcessor
 
   def self.content_file? filename
-    return filename.end_with? '.md'
+    return filename.end_with? CONTENT_EXTENSION
   end
 
   def self.process_content markdown, template, file_meta
@@ -100,7 +116,7 @@ class ContentProcessor
       when 'home.template.html'
         menu_item = doc.at_css('#top-menu a[href="/"]')
       when 'page.template.html'
-        menu_item = doc.at_css("#top-menu a[href='/#{file_meta[:filename].chomp('.md')}']")
+        menu_item = doc.at_css("#top-menu a[href='/#{no_ext(file_meta[:filename])}']")
       when 'blog.template.html'
         menu_item = doc.at_css('#top-menu a[href="/blog"]')
       end

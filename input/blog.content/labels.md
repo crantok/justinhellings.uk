@@ -3,6 +3,7 @@
 :post_title: "Labels: A gift or a burden?"
 :date: 2018-12-04
 :published: true
+:teaser: We often use labels for ourselves and other people. Some labels have a permanence that more nuanced kinds of description do not have...
 ---
 ### What are labels?
 
