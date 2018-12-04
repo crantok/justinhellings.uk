@@ -184,6 +184,8 @@ class StaticSiteGenerator
         file_meta
       )
 
+      next if ! html
+
       output_filename =
         get_content_output_filename( output_dir, file_meta[:filename] )
 

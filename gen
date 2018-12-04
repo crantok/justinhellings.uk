@@ -61,6 +61,10 @@ class ContentProcessor
   end
 
   def self.process_content markdown, template, file_meta
+    if file_meta[:template] == 'blog.template.html' && ! file_meta[:published]
+      return nil
+    end
+
     PROCESSORS.reduce( templated_content(markdown, template) ) do | doc, func |
       func.call(doc, file_meta)
     end
