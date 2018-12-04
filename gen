@@ -146,5 +146,11 @@ class ContentProcessor
 end
 
 
+def create_rss_feed metadata
+
+end
+
+
 ssg = StaticSiteGenerator.new TemplateProcessor, ContentProcessor
-ssg.generate Dir.pwd + "/input", Dir.pwd + "/output", Dir.pwd + "/templates"
+metadata = ssg.generate Dir.pwd + "/input", Dir.pwd + "/output", Dir.pwd + "/templates"
+create_rss_feed metadata

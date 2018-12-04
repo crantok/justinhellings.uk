@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Justin Hellings Life Coaching</title>
+    <link>http://www.yourwebsite.com/</link>
+    <description>Articles about life coaching and related subjects</description>
+
+    <item>
+      <title>Labels: A gift or a burden?</title>
+      <link>justinhellings.uk/blog/labels</link>
+      <guid>justinhellings.uk/blog/labels</guid>
+      <pubDate>Tue, 4 Dec 2018 13:00:00 GMT</pubDate>
+      <description>We often use labels for ourselves and other people. Some labels have a permanence that more nuanced kinds of description do not have.</description>
+    </item>
+
+  </channel>
+</rss>

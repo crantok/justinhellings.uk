@@ -23,10 +23,14 @@ class StaticSiteGenerator
   # Generate a website in +output_dir+ from the contents of +input_dir+ and
   # +templates_dir+
   def generate input_dir, output_dir, templates_dir
+    
     backup_output_directory(output_dir)
     metadata = read_input_directory(input_dir)
     create_tree_and_copy_assets(metadata, input_dir, output_dir)
     inflate_content(metadata, metadata, input_dir, output_dir, templates_dir)
+
+    # Return metadata, e.g. for RSS Feed
+    metadata
   end
 
 
