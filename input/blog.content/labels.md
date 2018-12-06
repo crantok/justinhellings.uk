@@ -3,7 +3,7 @@
 :post_title: "Labels: A gift or a burden?"
 :date: 2018-12-04
 :published: true
-:teaser: We often use labels for ourselves and other people. Some labels have a permanence that more nuanced kinds of description do not have...
+:teaser: Labels can support us to be ourselves and yet keep us from experiencing growth. Striking a balance is key.
 ---
 ### What are labels?
 

@@ -9,6 +9,30 @@
     <link rel="stylesheet" type="text/css" href="/assets/all.css">
     <script src='https://www.google.com/recaptcha/api.js'></script>
 
+    {{#is-blog-post}}
+    {{! Social media tags. Could add for top level pages too. }}
+    {{! Check at: https://cards-dev.twitter.com/validator }}
+    {{! Check at: https://developers.facebook.com/tools/debug/sharing }}
+
+    {{! * Constant tags }}
+    <meta property="og:site_name" content="Justin Hellings Life Coaching">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@jhellings">
+    <meta property="og:type" content="article" />
+    {{! <meta property="fb:app_id" content="your_app_id" /> }}
+
+    {{! * Image tags. Could vary them by post. }}
+    <meta name="twitter:image:alt" content="A shady cove on a cloudless day.">
+    <meta property="og:image" content="https://justinhellings.uk/img/DSC01716.JPG.25pc.jpg">
+    <meta name="twitter:image" content="https://justinhellings.uk/img/DSC01716.JPG.25pc.jpg">
+
+    {{! * Per-post tags }}
+    <meta property="og:title" content="Labels: A gift or a burden?">
+    <meta property="og:description" content="Labels can support us to be ourselves and yet keep us from experiencing growth. Striking a balance is key.">
+    <meta property="og:url" content="https://justinhellings.uk/blog/labels/">
+
+    {{/is-blog-post}}
+
     <link rel="alternate" type="application/rss+xml" title="RSS Feed for justinhellings.uk" href="/rss.xml" />
 </head>
 
