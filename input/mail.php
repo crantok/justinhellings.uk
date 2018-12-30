@@ -1,6 +1,6 @@
 <?php
 
-$config = parse_ini_file("config.ini", true);
+$config = parse_ini_file("../config.ini", true);
 
 // Recaptcha check taken from https://gist.github.com/jonathanstark/dfb30bdfb522318fc819
 //
