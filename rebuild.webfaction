@@ -1,0 +1,19 @@
+#
+# Rebuild the static site, including templates, on Webfaction using ruby 2.5
+#
+# Note: To install a gem for use in the site, the required command is
+#    GEM_HOME=$HOME/ruby2.5-gems RUBYLIB=$GEM_HOME/lib PATH=$GEM_HOME/bin:$PATH gem2.5 install <gemname>
+#
+export GEM_HOME=$HOME/ruby2.5-gems
+export RUBYLIB=$GEM_HOME/lib
+export PATH=$GEM_HOME/bin:$PATH
+
+cd templates && \
+ruby2.5 build-templates.rb && \
+cd .. && \
+ruby2.5 gen
+
+# Outside the webapps directory, newly created files and directories do not
+# seem to be traversable and readable by the webserver by default. To fix...
+setfacl -mR u:nginx:r-x output
+setfacl -mR u:apache:r-x output
