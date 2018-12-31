@@ -15,5 +15,5 @@ ruby2.5 gen
 
 # Outside the webapps directory, newly created files and directories do not
 # seem to be traversable and readable by the webserver by default. To fix...
-setfacl -mR u:nginx:r-x output
-setfacl -mR u:apache:r-x output
+#setfacl -R -m u:nginx:r-x output
+setfacl -R -m u:apache:r-x output
