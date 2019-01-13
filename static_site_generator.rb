@@ -3,7 +3,6 @@ require 'fileutils'
 require 'pathname'
 require 'yaml'
 
-
 class StaticSiteGenerator
 
   # +template_processor+ must fulfil
@@ -23,7 +22,7 @@ class StaticSiteGenerator
   # Generate a website in +output_dir+ from the contents of +input_dir+ and
   # +templates_dir+
   def generate input_dir, output_dir, templates_dir
-    
+
     backup_output_directory(output_dir)
     metadata = read_input_directory(input_dir)
     create_tree_and_copy_assets(metadata, input_dir, output_dir)
@@ -151,6 +150,12 @@ class StaticSiteGenerator
         end
       end
 
+      # Fill in the "blanks" in content file metadata with the aggregated
+      # directory metadata (config).
+      dir_meta[:content_files].each do | file_meta |
+        file_meta.merge! dir_meta[:config]
+      end
+
       dir_meta
   end
 
@@ -175,9 +180,6 @@ class StaticSiteGenerator
 
     # For each content file
     dir_meta[:content_files].each do |file_meta|
-
-      # fill in any holes in the file metadata from defaults in the directory config
-      file_meta = dir_meta[:config].merge(file_meta)
 
       template = get_template(
         File.join(templates_dir, file_meta[:template]), all_meta )
