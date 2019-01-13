@@ -2,7 +2,7 @@
 :html_head_title: "Labels: Gift or burden?"
 :post_title: "Labels: A gift or a burden?"
 :date: 2018-12-04
-:published: true
+:published: :published
 :teaser: Labels can support us to be ourselves and yet keep us from experiencing growth. Striking a balance is key.
 ---
 ### What are labels?

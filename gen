@@ -35,11 +35,9 @@ class TemplateProcessor
 
       blog_meta = metadata[:content_directories].find {|dir| dir[:filename] == 'blog.content'}
 
-      posts = blog_meta[:content_files]
-      .select do |file_meta|
-        # - by default, blog posts are *not* published
+      posts = blog_meta[:content_files].select do |file_meta|
         # - index.md is a symlink, not a blog post
-        file_meta[:published] && ( file_meta[:filename] != 'index.md' )
+        file_meta[:published] == :published  &&  ( file_meta[:filename] != 'index.md' )
       end
       .sort { |a,b| b[:date] <=> a[:date] } # latest first
 
@@ -48,7 +46,6 @@ class TemplateProcessor
 
       posts.each_with_index do | post, i |
         li = if i < listings.count then listings[i] else listings.first.clone end
-          pp li
 
         li.at_css('h3 a').content =
         post[:post_title] || post[:html_head_title]
