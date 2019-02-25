@@ -4,6 +4,9 @@
 :date: 2019-03-04
 :teaser: "When life feels hard we experience pain. We have some control over how we deal with pain but not all pain is equal. Some pain is direct, raw and spontaneous. Other pain is a result of the way we think about the things that hurt us."
 ---
+
+<aside> <p> Warning: This fictional dialogue includes a person who might have suffered trauma and who talks about their lived experience. This may be triggering if you are sensitive to this kind of thing. </p> </aside>
+
 Hi Alex. What's up?
 
 Hi J. I read something that mentioned primary and secondary pain and I was wondering what they were.
@@ -46,11 +49,11 @@ Right! And that's why this concept is relevant to mindfulness. When someone prac
 
 You did. I'm sorry. It's a great example though.
 
-I have another question. When someone gets angry or upset, I often get panicky. Sometimes it even happens when I think someone *might* get angry. I notice that other people have different reactions to me. Does that mean that I'm thinking about other people's anger differently? Is this another example of secondary pain?
+I have another question. When someone gets angry or upset, I often get panicky. Sometimes it even happens when I think someone *might* get upset. I notice that other people have different reactions to me. Does that mean that I'm thinking about other people's anger differently? Is this another example of secondary pain?
 
 Can you describe the feeling of panic you get when this happens?
 
-Well, I feel rooted to the spot and I can feel my heart really hammering. I feel like somebody might lunge at me at any moment. I feel hyper-aware of what's going on.
+Well, I feel rooted to the spot and I can feel my heart hammering. I feel like somebody might lunge at me at any moment. I feel hyper-aware of what's going on.
 
 That sounds like a fight or flight response.
 
@@ -68,9 +71,9 @@ It's true that when most people think about trauma they think about obviously ho
 
 But what could be dangerous enough to do that? Nothing in *my* life.
 
-How dangerous something seems depends on the context. Something in the past that was traumatic may look different to you now. You may see it as a normal part of living, or of growing up.
+How dangerous something seems depends on the context. Something in the past that was traumatic may look different to you now. You may see it as a normal part of living or of growing up.
 
-If a traumatic event looked normal to me now then I might never figure out what it is. So how do I change what's happening? Sometimes I manage to push through the intense feeling but whatever I do or say never seems to come out right. I always seem to offend someone or make a fool of myself and feel guilty or embarrassed, often both.
+If a traumatic event looks normal to me now then I might never figure out what it is. So how do I change what's happening? Sometimes I push through the intense feeling but whatever I do or say doesn't seem to come out right. I always seem to offend someone or make a fool of myself and feel guilty or embarrassed, often both.
 
 The way you are talking about it sounds really vivid.
 
