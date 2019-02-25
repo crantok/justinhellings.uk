@@ -4,6 +4,13 @@
 #  - plain html template files
 #  - markdown content files
 #  - nokogiri content insertion
+#
+# Re blog posts:
+#  - blog posts have a published status
+#  - when that status is *falsey*, the blog post page is *not* generated
+#  - when that status is *truthy*, the blog post page *is* generated
+#  - when that status equals :published, the blog post is listed in the blog posts sidebar
+#
 
 require './static_site_generator'
 require 'redcarpet'
@@ -36,7 +43,8 @@ class TemplateProcessor
       blog_meta = metadata[:content_directories].find {|dir| dir[:filename] == 'blog.content'}
 
       posts = blog_meta[:content_files].select do |file_meta|
-        # - index.md is a symlink, not a blog post
+        # - the published status must be exactly :published to link to the blog post
+        # - ignore index.md . it is a symlink, not a blog post
         file_meta[:published] == :published  &&  ( file_meta[:filename] != 'index.md' )
       end
       .sort { |a,b| b[:date] <=> a[:date] } # latest first
