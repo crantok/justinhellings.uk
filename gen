@@ -13,9 +13,10 @@
 #
 
 require './static_site_generator'
-require 'redcarpet'
-require 'nokogiri'
-require 'pp'
+require 'redcarpet'  # markdown processing
+require 'nokogiri'   # inserting dynamic values into html
+require 'cgi'        # escaping query parameters
+require 'pp'         # debugging - pretty printing objects
 
 
 CONTENT_EXTENSION = '.md'
@@ -131,16 +132,24 @@ class ContentProcessor
       doc
     end,
 
-    # Set blog-post metadata
+    # Set blog-post metadata and socmed links
     ->(doc, file_meta) do
       return doc if file_meta[:template] != 'blog.template.html'
 
-      doc.at_css('main h2').content =
-        file_meta[:post_title] || file_meta[:html_head_title]
+      title = file_meta[:post_title] || file_meta[:html_head_title]
+      url = 'https://justinhellings.uk/blog/' + no_ext(file_meta[:filename]) + '/'
+
+      doc.at_css('main h2').content = title
       doc.at_css('main .blog-meta .date').content =
-        file_meta[:date].strftime(
-          english_ordinal( file_meta[:date].day ) + " %B %Y"
-        )
+      file_meta[:date].strftime(
+        english_ordinal( file_meta[:date].day ) + " %B %Y"
+      )
+      doc.at_css('.sharing a.twitter').set_attribute('href',
+        'https://twitter.com/intent/tweet?text=' + CGI.escape(title + ' ' + url + ' @JHellings')
+      )
+      doc.at_css('.sharing a.facebook').set_attribute('href',
+        'https://www.facebook.com/sharer/sharer.php?u=' + CGI.escape(url)
+      )
 
       doc
     end
