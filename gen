@@ -139,6 +139,7 @@ class ContentProcessor
       title = file_meta[:post_title] || file_meta[:html_head_title]
       url = 'https://justinhellings.uk/blog/' + no_ext(file_meta[:filename]) + '/'
 
+      doc.at_css('meta.og-description').set_attribute('content', file_meta[:teaser])
       doc.at_css('main h2').content = title
       doc.at_css('main .blog-meta .date').content =
       file_meta[:date].strftime(
