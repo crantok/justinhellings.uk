@@ -1,7 +1,7 @@
 ---
 :html_head_title: "Feeling ashamed and how to deal with it"
 :post_title: "Feeling ashamed and how to deal with it"
-:date: 2019-03-04
+:date: 2019-02-28
 :teaser: "Do you long for some kind of reset button that would make everyone else forget the things you feel ashamed about? This is the kind of fantasy that is very appealing when you suffer from chronic shame. If that describes you then you are not suffering alone."
 ---
 
