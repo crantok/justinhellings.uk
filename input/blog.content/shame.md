@@ -6,7 +6,7 @@
 :published: :preview
 ---
 
-Shame is the feeling that you are unacceptable. It is what you feel when you think you've done something so bad that you need to exclude yourself from society. It is the hide-yourself-away emotion. If you feel shame a lot it can make it very hard to ask for help, and to trust people to help. That's because shame tells you that you don't deserve help and that anyone who is trying to help you doesn't yet realise how awful you are. With guilt, regret and remorse, you might reach out to people to try and make amends, but shame tells you to push the rest of the world away.
+Shame is the feeling that you are unacceptable. It is what you feel when you think you've done something bad enough that you need to exclude yourself from society, at least temporarily. It is the hide-yourself-away emotion. If you feel shame a lot it can make it very hard to ask for help, and to trust people to help. That's because shame tells you that you don't deserve help and that anyone who is trying to help you doesn't yet realise how awful you are. With guilt, regret and remorse, you might reach out to people to try and make amends, but shame tells you to push the rest of the world away.
 
 Let's take a look at three things:
 
@@ -20,7 +20,7 @@ If you struggle with shame a lot then it might seem crazy that shame could be us
 
 ### Why some people feel shame more than others
 
-Shame can be thought of as the anticipation of rejection. People have different sensitivities to rejection. Those with antisocial personality disorder (which includes psychopaths) do not feel rejection. People who have suffered multiple traumas, for example those with borderline personality dissorder, can be exquisitely sensitive to rejection. The rest of us lie between these extremes.
+Shame can be thought of as the anticipation of rejection. People have different sensitivities to rejection. Those with antisocial personality disorder (which includes psychopaths) do not feel rejection. People who have suffered multiple traumas, for example those with borderline personality disorder, can be exquisitely sensitive to rejection. Other people lie between these extremes.
 
 <aside>
 In some circumstances, rejection can feel so dangerous that when it happens (or when we think it <em>might</em> happen) it triggers a fight-or-flight response. When this happens, we react instinctively; we attack, or flee, or freeze, or submit. If this is a familiar experience for you then seeking help might make a very big difference to your life. Here in the UK, I would advise people to contact their GP (doctor) or a mental-health professional.
