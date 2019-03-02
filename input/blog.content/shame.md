@@ -26,7 +26,7 @@ Shame can be thought of as the anticipation of rejection. People have different 
 In some circumstances, rejection can feel so dangerous that when it happens (or when we think it <em>might</em> happen) it triggers a fight-or-flight response. When this happens, we react instinctively; we attack, or flee, or freeze, or submit. If this is a familiar experience for you then seeking help might make a very big difference to your life. Here in the UK, I would advise people to contact their GP (doctor) or a mental-health professional.
 </aside>
 
-If we feel shame more than most people then it can be for a variety of reasons. We may have been conditioned to be ashamed of certain acts. This can happen as children when a caregiver "rejects" us for behaving in a certain way. If we repeatedly feel humiliated or that we might be ejected from our family for doing particular things then we will probably feel shame when we do those things later. This can be a big problem when those actions are part of our identity (e.g. our sexuality) or necessary for navigating the world (e.g. asking for help) or are unavoidable parts of life (e.g. making mistakes.) In this case we are punishing ourselves for just living.
+If we feel shame more than most people then it can be for a variety of reasons. We may have been conditioned to be ashamed of certain acts. This can happen as children when a caregiver "rejects" us for behaving in a certain way. If we repeatedly feel humiliated, or that we might be ejected from our family, for doing particular things then we will probably feel shame when we do those things later. This can be a big problem when those actions are part of our identity (e.g. our sexuality) or necessary for navigating the world (e.g. asking for help) or are unavoidable parts of life (e.g. making mistakes.) In this case we are punishing ourselves for just living.
 
 ### What to do about excessive shame
 
@@ -49,7 +49,7 @@ Books:
 
  - [The mindful path to self-compassion](https://chrisgermer.com/mindful-path-self-compassion/) by Christopher Germer. I like the steady feeling of progression in this book.
  - [The compassionate mind](https://www.goodreads.com/book/show/6372017-the-compassionate-mind) by Paul Gilbert. The first half is an accessible description of the evolution of our emotional systems. The second half is self-compassion exercises.
- - [Self-compassion]() by Kristen Neff. Neff is very open about her own experience of healing.
+ - [Self-compassion](https://www.goodreads.com/book/show/10127008-self-compassion) by Kristen Neff. Neff is very open about her own experience of healing.
 
 Websites:
 
