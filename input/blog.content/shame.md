@@ -3,7 +3,7 @@
 :post_title: "Feeling ashamed and how to deal with it"
 :date: 2019-02-28
 :teaser: "Do you long for some kind of reset button that would make everyone else forget the things you feel ashamed about? This is the kind of fantasy that is very appealing when you suffer from shame a lot. If that describes you then you are not suffering alone."
-:published: :preview
+:published: :published
 ---
 
 Shame is the feeling that you are unacceptable. It is what you feel when you think you've done something bad enough that you need to exclude yourself from society, at least temporarily. It is the hide-yourself-away emotion. If you feel shame a lot it can make it very hard to ask for help, and to trust people to help. That's because shame tells you that you don't deserve help and that anyone who is trying to help you doesn't yet realise how awful you are. With guilt, regret and remorse, you might reach out to people to try and make amends, but shame tells you to push the rest of the world away.
