@@ -212,6 +212,9 @@ img {
 aside {
   margin: 30px;
   padding: 20px;
+}
+
+aside.sharing {
   background-color: #f0f0f0;
 }
 
